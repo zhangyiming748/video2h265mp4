@@ -1,12 +1,12 @@
 package convert
 
 import (
+	"github.com/zhangyiming748/video2h265mp4/log"
 	"os"
 	"os/exec"
 	"path"
 	"strconv"
 	"strings"
-	"video2h265mp4/log"
 )
 
 func Master(src, dst, pattern string, threads int) {
