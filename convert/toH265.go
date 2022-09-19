@@ -9,15 +9,15 @@ import (
 	"strings"
 )
 
-func ToH265(src, dst, pattern string, threads int) {
+func ConvertToH265(src, dst, pattern string, threads int) {
 	files := getFiles(src, pattern)
 	l := len(files)
 	for index, file := range files {
-		toH265(src, dst, file, index, l, threads)
+		toH265_help(src, dst, file, index, l, threads)
 	}
 
 }
-func toH265(src, dst, file string, index, total, threads int) {
+func toH265_help(src, dst, file string, index, total, threads int) {
 
 	in := strings.Join([]string{src, file}, "/")
 	log.Debug.Printf("开始处理文件:%v", in)

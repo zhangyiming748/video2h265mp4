@@ -1,6 +1,9 @@
-package convert
+package video2h265mp4
 
-import "testing"
+import (
+	. "github.com/zhangyiming748/video2h265mp4/convert"
+	"testing"
+)
 
 func TestUnit(t *testing.T) {
 	src := "/Users/zen/Github/video2h265mp4/DB"
