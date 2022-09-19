@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func Master(src, dst, pattern string, threads int) {
+func ToH265(src, dst, pattern string, threads int) {
 	files := getFiles(src, pattern)
 	l := len(files)
 	for index, file := range files {
