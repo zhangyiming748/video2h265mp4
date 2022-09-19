@@ -5,19 +5,18 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"strconv"
 	"strings"
 )
 
-func ConvertToH265(src, dst, pattern string, threads int) {
+func ConvertToH265(src, dst, pattern, threads string) {
 	files := getFiles(src, pattern)
 	l := len(files)
 	for index, file := range files {
-		toH265_help(src, dst, file, index, l, threads)
+		toH265_help(src, dst, file, threads, index, l)
 	}
 
 }
-func toH265_help(src, dst, file string, index, total, threads int) {
+func toH265_help(src, dst, file, threads string, index, total int) {
 
 	in := strings.Join([]string{src, file}, "/")
 	log.Debug.Printf("开始处理文件:%v", in)
@@ -28,8 +27,8 @@ func toH265_help(src, dst, file string, index, total, threads int) {
 	out := strings.Join([]string{dst, newFilename}, "/")
 
 	log.Info.Printf("src:%s\tfile:%s\nin:%s\tout:%s\n", src, file, in, out)
-	t := strconv.Itoa(threads)
-	cmd := exec.Command("ffmpeg", "-threads", t, "-i", in, "-c:v", "libx265", "-threads", t, out)
+
+	cmd := exec.Command("ffmpeg", "-threads", threads, "-i", in, "-c:v", "libx265", "-threads", threads, out)
 	log.Debug.Printf("开始处理文件%s\t生成的命令是:%s", file, cmd)
 	// 命令的错误输出和标准输出都连接到同一个管道
 	stdout, err := cmd.StdoutPipe()
