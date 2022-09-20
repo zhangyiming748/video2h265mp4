@@ -1,7 +1,6 @@
 package video2h265mp4
 
 import (
-	. "github.com/zhangyiming748/video2h265mp4/convert"
 	"testing"
 )
 
