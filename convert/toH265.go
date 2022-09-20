@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"strings"
 )
 
@@ -12,7 +13,9 @@ func ConvToH265(src, dst, pattern, threads string) {
 	files := getFiles(src, pattern)
 	l := len(files)
 	for index, file := range files {
+		runtime.GC()
 		toh265Help(src, dst, file, threads, index, l)
+		runtime.GC()
 	}
 
 }
@@ -20,10 +23,11 @@ func toh265Help(src, dst, file, threads string, index, total int) {
 
 	in := strings.Join([]string{src, file}, "/")
 	log.Debug.Printf("开始处理文件:%v", in)
-	justname := ShortNameGetFileName(file)
-	justname = replace(justname)
+	extname := path.Ext(file)
+	filename := strings.Trim(file, extname)
+	filename = replace(filename)
 
-	newFilename := strings.Join([]string{justname, "mp4"}, ".")
+	newFilename := strings.Join([]string{filename, "mp4"}, ".")
 	out := strings.Join([]string{dst, newFilename}, "/")
 
 	log.Info.Printf("src:%s\tfile:%s\nin:%s\tout:%s\n", src, file, in, out)
