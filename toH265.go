@@ -38,10 +38,10 @@ func toh265Help(src, dst, file, threads string, index, total int) {
 	stdout, err := cmd.StdoutPipe()
 	cmd.Stderr = cmd.Stdout
 	if err != nil {
-		log.Debug.Printf("cmd.StdoutPipe产生的错误:%v", err)
+		log.Debug.Panicf("cmd.StdoutPipe产生的错误:%v", err)
 	}
 	if err = cmd.Start(); err != nil {
-		log.Debug.Printf("cmd.Run产生的错误:%v", err)
+		log.Debug.Panicf("cmd.Run产生的错误:%v", err)
 	}
 	// 从管道中实时获取输出并打印到终端
 	for {
@@ -57,38 +57,17 @@ func toh265Help(src, dst, file, threads string, index, total int) {
 		}
 	}
 	if err = cmd.Wait(); err != nil {
-		log.Debug.Println("命令执行中有错误产生", err)
+		log.Debug.Panicf("命令执行中有错误产生", err)
 	}
 	log.Debug.Printf("完成当前文件的处理:源文件是%s\t目标文件是%s\n", in, file)
+	err = os.RemoveAll(in)
+	if err != nil {
+		return
+	} else {
+		log.Debug.Printf("删除源文件:%s\n", in)
+	}
 }
 
-// 短文件名只获取文件名本名
-func ShortNameGetFileName(fname string) string {
-	ext := path.Ext(fname)
-	justname := strings.Trim(fname, ext)
-	return justname
-}
-
-// 短文件名只获取文件扩展名
-func ShortNameGetExtNmae(fname string) string {
-	dot := path.Ext(fname)
-	ext := strings.Trim(dot, ".")
-	return ext
-}
-
-// 文件绝对路径获取长文件名本名
-func LongNameGetFileName(fname string) string {
-	ext := path.Ext(fname)
-	longname := strings.Replace(fname, ext, "", 1)
-	return longname
-}
-
-// 文件绝对路径获取文件扩展名
-func LongNameGetExtName(fname string) string {
-	dot := path.Ext(fname)
-	ext := strings.Trim(dot, ".")
-	return ext
-}
 func getFiles(dir, pattern string) []string {
 	files, _ := os.ReadDir(dir)
 	var aim []string
