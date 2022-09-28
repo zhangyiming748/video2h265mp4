@@ -131,11 +131,17 @@ func voice(msg int) {
 		// 查询发音人 `say -v ?`
 		switch msg {
 		case success:
-			cmd = exec.Command("say", "-v", "Kate", "Rocket was launched successfully")
+			//cmd = exec.Command("say", "-v", "Kate", "Rocket was launched successfully")
+			cmd = exec.Command("say", "-v", "Victoria", "Rocket was launched successfully")
+			cmd.Start()
 		case failed:
-			cmd = exec.Command("say", "-v", "Bad News", "Rocket launch failed")
+			//cmd = exec.Command("say", "-v", "Bad News", "Rocket launch failed")
+			cmd = exec.Command("say", "-v", "Victoria", "Rocket launch failed")
+			cmd.Start()
 		case complete:
-			cmd = exec.Command("say", "-v", "Kate", "mission complete!")
+			//cmd = exec.Command("say", "-v", "Kate", "mission complete!")
+			cmd = exec.Command("say", "-v", "Victoria", "mission complete!")
+			cmd.Start()
 		}
 	case "linux":
 		cmd = exec.Command("echo", "-e", "\\a")
@@ -143,19 +149,16 @@ func voice(msg int) {
 		case success:
 			for i := 0; i < 2; i++ {
 				cmd.Start()
-				cmd.Wait()
 			}
 		case failed:
 			for i := 0; i < 50; i++ {
 				cmd.Start()
-				cmd.Wait()
 			}
 		case complete:
 			for i := 0; i < 100; i++ {
 				cmd.Start()
-				cmd.Wait()
 			}
 		}
 	}
-	cmd.Run()
+	cmd.Wait()
 }
