@@ -1,6 +1,7 @@
 package video2h265mp4
 
 import (
+	"github.com/zhangyiming748/replace"
 	"github.com/zhangyiming748/video2h265mp4/log"
 	"os"
 	"os/exec"
@@ -47,7 +48,7 @@ func toh265Help(src, dst, file, threads string, index, total int) {
 	log.Debug.Printf("开始处理文件:%v\n", in)
 	extname := path.Ext(file)
 	filename := strings.Trim(file, extname)
-	filename = replace(filename)
+	filename = replace.Replace(filename)
 	newFilename := strings.Join([]string{filename, "mp4"}, ".")
 	out := strings.Join([]string{dst, newFilename}, "/")
 
@@ -107,22 +108,22 @@ func getFiles(dir, pattern string) []string {
 	return aim
 }
 
-func replace(str string) string {
-	str = strings.Replace(str, "\n", "", -1)
-	str = strings.Replace(str, " ", "", -1)
-	str = strings.Replace(str, "《", "", -1)
-	str = strings.Replace(str, "》", "", -1)
-	str = strings.Replace(str, "【", "", -1)
-	str = strings.Replace(str, "】", "", -1)
-	str = strings.Replace(str, "(", "", -1)
-	str = strings.Replace(str, "+", "", -1)
-	str = strings.Replace(str, ")", "", -1)
-	str = strings.Replace(str, "`", "", -1)
-	str = strings.Replace(str, " ", "", -1)
-	str = strings.Replace(str, "\u00A0", "", -1)
-	str = strings.Replace(str, "\u0000", "", -1)
-	return str
-}
+//func replace(str string) string {
+//	str = strings.Replace(str, "\n", "", -1)
+//	str = strings.Replace(str, " ", "", -1)
+//	str = strings.Replace(str, "《", "", -1)
+//	str = strings.Replace(str, "》", "", -1)
+//	str = strings.Replace(str, "【", "", -1)
+//	str = strings.Replace(str, "】", "", -1)
+//	str = strings.Replace(str, "(", "", -1)
+//	str = strings.Replace(str, "+", "", -1)
+//	str = strings.Replace(str, ")", "", -1)
+//	str = strings.Replace(str, "`", "", -1)
+//	str = strings.Replace(str, " ", "", -1)
+//	str = strings.Replace(str, "\u00A0", "", -1)
+//	str = strings.Replace(str, "\u0000", "", -1)
+//	return str
+//}
 
 func voice(msg int) {
 	var cmd *exec.Cmd
