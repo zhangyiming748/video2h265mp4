@@ -3,6 +3,7 @@ package video2h265mp4
 import (
 	"fmt"
 	"os/exec"
+	"strconv"
 	"testing"
 )
 
@@ -34,5 +35,21 @@ func TestBeep(t *testing.T) {
 	fmt.Println(cmd)
 	for i := 0; i < 10; i++ {
 		cmd.Run()
+	}
+}
+func TestFakeThreads(t *testing.T) {
+	thread := "13"
+	ret := fakeThreads(thread)
+	t.Log(ret)
+
+}
+func fakeThreads(threads string) bool {
+	maxThreads := 12
+	if t, err := strconv.Atoi(threads); err != nil {
+		return false
+	} else if t >= maxThreads {
+		return false
+	} else {
+		return true
 	}
 }
