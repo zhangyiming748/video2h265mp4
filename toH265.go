@@ -3,6 +3,7 @@ package video2h265mp4
 import (
 	"github.com/zhangyiming748/replace"
 	"github.com/zhangyiming748/video2h265mp4/log"
+	"github.com/zhangyiming748/voiceAlert"
 	"os"
 	"os/exec"
 	"path"
@@ -20,10 +21,10 @@ const (
 func ConvToH265(src, dst, pattern, threads string) {
 	defer func() {
 		if err := recover(); err != nil {
-			voice(failed)
+			voiceAlert.Voice(failed)
 			log.Debug.Printf("程序此次运行产生的错误:%v\n", err)
 		} else {
-			voice(complete)
+			voiceAlert.Voice(complete)
 		}
 	}()
 	if illegal(src, dst, threads) {
@@ -37,15 +38,14 @@ func ConvToH265(src, dst, pattern, threads string) {
 		toh265Help(src, dst, file, threads, index, l)
 		runtime.GC()
 	}
-
 }
 
 func toh265Help(src, dst, file, threads string, index, total int) {
 	defer func() {
 		if err := recover(); err != nil {
-			voice(failed)
+			voiceAlert.Voice(failed)
 		} else {
-			voice(success)
+			voiceAlert.Voice(success)
 		}
 	}()
 	in := strings.Join([]string{src, file}, "/")
@@ -112,61 +112,6 @@ func getFiles(dir, pattern string) []string {
 	return aim
 }
 
-//func replace(str string) string {
-//	str = strings.Replace(str, "\n", "", -1)
-//	str = strings.Replace(str, " ", "", -1)
-//	str = strings.Replace(str, "《", "", -1)
-//	str = strings.Replace(str, "》", "", -1)
-//	str = strings.Replace(str, "【", "", -1)
-//	str = strings.Replace(str, "】", "", -1)
-//	str = strings.Replace(str, "(", "", -1)
-//	str = strings.Replace(str, "+", "", -1)
-//	str = strings.Replace(str, ")", "", -1)
-//	str = strings.Replace(str, "`", "", -1)
-//	str = strings.Replace(str, " ", "", -1)
-//	str = strings.Replace(str, "\u00A0", "", -1)
-//	str = strings.Replace(str, "\u0000", "", -1)
-//	return str
-//}
-
-func voice(msg int) {
-	var cmd *exec.Cmd
-	switch runtime.GOOS {
-	case "darwin":
-		// 查询发音人 `say -v ?`
-		switch msg {
-		case success:
-			//cmd = exec.Command("say", "-v", "Kate", "Rocket was launched successfully")
-			cmd = exec.Command("say", "-v", "Victoria", "Rocket was launched successfully")
-			cmd.Start()
-		case failed:
-			//cmd = exec.Command("say", "-v", "Bad News", "Rocket launch failed")
-			cmd = exec.Command("say", "-v", "Victoria", "Rocket launch failed")
-			cmd.Start()
-		case complete:
-			//cmd = exec.Command("say", "-v", "Kate", "mission complete!")
-			cmd = exec.Command("say", "-v", "Victoria", "mission complete!")
-			cmd.Start()
-		}
-	case "linux":
-		cmd = exec.Command("echo", "-e", "\\a")
-		switch msg {
-		case success:
-			for i := 0; i < 2; i++ {
-				cmd.Start()
-			}
-		case failed:
-			for i := 0; i < 50; i++ {
-				cmd.Start()
-			}
-		case complete:
-			for i := 0; i < 100; i++ {
-				cmd.Start()
-			}
-		}
-	}
-	cmd.Wait()
-}
 func illegal(src, dst, threads string) bool {
 	if src == dst {
 		log.Debug.Println("输入输出目录相同")
