@@ -1,6 +1,7 @@
 package video2h265mp4
 
 import (
+	"fmt"
 	"github.com/zhangyiming748/replace"
 	"github.com/zhangyiming748/video2h265mp4/log"
 	"github.com/zhangyiming748/voiceAlert"
@@ -16,6 +17,17 @@ const (
 	success  = iota + 1 // 单次转码成功
 	failed              // 转码失败,程序退出
 	complete            // 转码进程完成
+)
+const (
+	Byte     = 1
+	Kilobyte = 1000
+	Megabyte = 1000 * 1000
+	Gigabyte = 1000 * 1000 * 1000
+	Tegabyte = 1000 * 1000 * 1000 * 1000
+	Pegabyte = 1000 * 1000 * 1000 * 1000 * 1000
+	Exgabyte = 1000 * 1000 * 1000 * 1000 * 1000 * 1000
+	Zegabyte = 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000
+	Yogabyte = 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000
 )
 
 func ConvToH265(src, dst, pattern, threads string) {
@@ -35,12 +47,19 @@ func ConvToH265(src, dst, pattern, threads string) {
 	l := len(files)
 	for index, file := range files {
 		runtime.GC()
-		toh265Help(src, dst, file, threads, index, l)
+		size := getSize(strings.Join([]string{src, file}, "/"))
+		log.Debug.Printf("原始文件:%v\t处理前大小:%v\n", file, size)
+		fulldst := toh265Help(src, dst, file, threads, index, l)
+		resize := getSize(fulldst)
+		log.Debug.Printf("生成文件:%v\t处理后大小:%v\n", fulldst, resize)
 		runtime.GC()
 	}
 }
 
-func toh265Help(src, dst, file, threads string, index, total int) {
+/*
+处理文件并反回输出文件全路径
+*/
+func toh265Help(src, dst, file, threads string, index, total int) string {
 	defer func() {
 		if err := recover(); err != nil {
 			voiceAlert.Voice(failed)
@@ -89,10 +108,11 @@ func toh265Help(src, dst, file, threads string, index, total int) {
 	log.Debug.Printf("完成当前文件的处理:源文件是%s\t目标文件是%s\n", in, file)
 	err = os.RemoveAll(in)
 	if err != nil {
-		return
+		return ""
 	} else {
 		log.Debug.Printf("删除源文件:%s\n", in)
 	}
+	return out
 }
 
 func getFiles(dir, pattern string) []string {
@@ -171,4 +191,52 @@ func allowThreads(threads string) bool {
 	} else {
 		return true
 	}
+}
+func getSize(file string) string {
+	Meta, _ := os.Stat(file)
+	log.Info.Printf("name:%v\n", Meta.Name())
+	log.Info.Printf("size:%v\n", Meta.Size())
+	log.Info.Printf("is dir:%v\n", Meta.IsDir())
+	log.Info.Printf("mode:%v\n", Meta.Mode())
+	log.Info.Printf("modTime:%v\n", Meta.ModTime())
+	fsize := float64(Meta.Size())
+	var size string
+	if fsize < Kilobyte {
+		bsize := fsize / Byte
+		s := fmt.Sprintf("%f", bsize)
+		size = strings.Join([]string{s, "Byte"}, "")
+	} else if Meta.Size() < Megabyte {
+		ksize := fsize / Kilobyte
+		s := fmt.Sprintf("%.1f", ksize)
+		size = strings.Join([]string{s, "Kilobyte"}, "")
+	} else if fsize < Gigabyte {
+		msize := fsize / Megabyte
+		s := fmt.Sprintf("%.2f", msize)
+		size = strings.Join([]string{s, "Megabyte"}, "")
+	} else if fsize < Tegabyte {
+		gsize := fsize / Gigabyte
+		s := fmt.Sprintf("%.3f", gsize)
+		size = strings.Join([]string{s, "Gigabyte"}, "")
+	} else if fsize < Pegabyte {
+		tsize := fsize / Tegabyte
+		s := fmt.Sprintf("%.4f", tsize)
+		size = strings.Join([]string{s, "Tegabyte"}, "")
+	} else if fsize < Exgabyte {
+		psize := fsize / Pegabyte
+		s := fmt.Sprintf("%.5f", psize)
+		size = strings.Join([]string{s, "Pegabyte"}, "")
+	} else if fsize < Zegabyte {
+		zsize := fsize / Exgabyte
+		s := fmt.Sprintf("%.6f", zsize)
+		size = strings.Join([]string{s, "Exgabyte"}, "")
+	} else if fsize < Yogabyte {
+		ysize := fsize / Zegabyte
+		s := fmt.Sprintf("%.7f", ysize)
+		size = strings.Join([]string{s, "Zegabyte"}, "")
+	} else {
+		more := fsize / Yogabyte
+		s := fmt.Sprintf("%.8f", more)
+		size = strings.Join([]string{s, "Yogabyte"}, "")
+	}
+	return size
 }
