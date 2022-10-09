@@ -48,10 +48,9 @@ func ConvToH265(src, dst, pattern, threads string) {
 	for index, file := range files {
 		runtime.GC()
 		size := getSize(strings.Join([]string{src, file}, "/"))
-		log.Debug.Printf("原始文件:%v\t处理前大小:%v\n", file, size)
 		fulldst := toh265Help(src, dst, file, threads, index, l)
 		resize := getSize(fulldst)
-		log.Debug.Printf("生成文件:%v\t处理后大小:%v\n", fulldst, resize)
+		log.Debug.Printf("原始文件:%v\t处理前大小:%v\n生成文件:%v\t处理后大小:%v\n", file, size, fulldst, resize)
 		runtime.GC()
 	}
 }
