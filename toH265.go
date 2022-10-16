@@ -30,7 +30,11 @@ const (
 	Yogabyte = 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000
 )
 
-func ConvToH265(src, dst, pattern, threads string) {
+/*
+转换h265并返回此次任务节省的磁盘空间
+*/
+func ConvToH265(src, dst, pattern, threads string) string {
+	var sum int64
 	defer func() {
 		if err := recover(); err != nil {
 			voiceAlert.Voice(failed)
@@ -53,12 +57,13 @@ func ConvToH265(src, dst, pattern, threads string) {
 		after, _ := os.Stat(fulldst)
 		after_size := after.Size()
 		diff := diff(before_size, after_size)
+		sum += (before_size - after_size)
 		log.Debug.Printf("原始文件:%v\t处理前大小:%v\n", file, getSize(before_size))
 		log.Debug.Printf("生成文件:%v\t处理后大小:%v\n", fulldst, getSize(after_size))
 		log.Debug.Printf("节省了%v的空间\n", diff)
-
 		runtime.GC()
 	}
+	return getSize(sum)
 }
 
 /*
