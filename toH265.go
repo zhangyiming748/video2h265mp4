@@ -47,11 +47,16 @@ func ConvToH265(src, dst, pattern, threads string) {
 	l := len(files)
 	for index, file := range files {
 		runtime.GC()
-		size := getSize(strings.Join([]string{src, file}, "/"))
+		before, _ := os.Stat(strings.Join([]string{src, file}, "/"))
+		before_size := before.Size()
 		fulldst := toh265Help(src, dst, file, threads, index, l)
-		resize := getSize(fulldst)
-		log.Debug.Printf("原始文件:%v\t处理前大小:%v\n", file, size)
-		log.Debug.Printf("生成文件:%v\t处理后大小:%v\n", fulldst, resize)
+		after, _ := os.Stat(fulldst)
+		after_size := after.Size()
+		diff := diff(before_size, after_size)
+		log.Debug.Printf("原始文件:%v\t处理前大小:%v\n", file, getSize(before_size))
+		log.Debug.Printf("生成文件:%v\t处理后大小:%v\n", fulldst, getSize(after_size))
+		log.Debug.Printf("节省了%v的空间\n", diff)
+
 		runtime.GC()
 	}
 }
@@ -192,51 +197,56 @@ func allowThreads(threads string) bool {
 		return true
 	}
 }
-func getSize(file string) string {
-	Meta, _ := os.Stat(file)
-	log.Info.Printf("name:%v\n", Meta.Name())
-	log.Info.Printf("size:%v\n", Meta.Size())
-	log.Info.Printf("is dir:%v\n", Meta.IsDir())
-	log.Info.Printf("mode:%v\n", Meta.Mode())
-	log.Info.Printf("modTime:%v\n", Meta.ModTime())
-	fsize := float64(Meta.Size())
-	var size string
+
+/*
+输入文件路径,返回容量差
+*/
+func diff(before, after int64) string {
+	b := before - after
+	s := getSize(b)
+	return s
+}
+
+func getSize(size int64) string {
+
+	fsize := float64(size)
+	var report string
 	if fsize < Kilobyte {
 		bsize := fsize / Byte
 		s := fmt.Sprintf("%f", bsize)
-		size = strings.Join([]string{s, "Byte"}, "")
-	} else if Meta.Size() < Megabyte {
+		report = strings.Join([]string{s, "Byte"}, "")
+	} else if fsize < Megabyte {
 		ksize := fsize / Kilobyte
 		s := fmt.Sprintf("%.1f", ksize)
-		size = strings.Join([]string{s, "Kilobyte"}, "")
+		report = strings.Join([]string{s, "Kilobyte"}, "")
 	} else if fsize < Gigabyte {
 		msize := fsize / Megabyte
 		s := fmt.Sprintf("%.2f", msize)
-		size = strings.Join([]string{s, "Megabyte"}, "")
+		report = strings.Join([]string{s, "Megabyte"}, "")
 	} else if fsize < Tegabyte {
 		gsize := fsize / Gigabyte
 		s := fmt.Sprintf("%.3f", gsize)
-		size = strings.Join([]string{s, "Gigabyte"}, "")
+		report = strings.Join([]string{s, "Gigabyte"}, "")
 	} else if fsize < Pegabyte {
 		tsize := fsize / Tegabyte
 		s := fmt.Sprintf("%.4f", tsize)
-		size = strings.Join([]string{s, "Tegabyte"}, "")
+		report = strings.Join([]string{s, "Tegabyte"}, "")
 	} else if fsize < Exgabyte {
 		psize := fsize / Pegabyte
 		s := fmt.Sprintf("%.5f", psize)
-		size = strings.Join([]string{s, "Pegabyte"}, "")
+		report = strings.Join([]string{s, "Pegabyte"}, "")
 	} else if fsize < Zegabyte {
 		zsize := fsize / Exgabyte
 		s := fmt.Sprintf("%.6f", zsize)
-		size = strings.Join([]string{s, "Exgabyte"}, "")
+		report = strings.Join([]string{s, "Exgabyte"}, "")
 	} else if fsize < Yogabyte {
 		ysize := fsize / Zegabyte
 		s := fmt.Sprintf("%.7f", ysize)
-		size = strings.Join([]string{s, "Zegabyte"}, "")
+		report = strings.Join([]string{s, "Zegabyte"}, "")
 	} else {
 		more := fsize / Yogabyte
 		s := fmt.Sprintf("%.8f", more)
-		size = strings.Join([]string{s, "Yogabyte"}, "")
+		report = strings.Join([]string{s, "Yogabyte"}, "")
 	}
-	return size
+	return report
 }
