@@ -51,10 +51,16 @@ func ConvToH265(src, dst, pattern, threads string) string {
 	l := len(files)
 	for index, file := range files {
 		runtime.GC()
-		before, _ := os.Stat(strings.Join([]string{src, file}, "/"))
+		before, err := os.Stat(strings.Join([]string{src, file}, "/"))
+		if err != nil {
+			log.Debug.Printf("获取源文件基础数据产生的错误:%v\n", err)
+		}
 		before_size := before.Size()
 		fulldst := toh265Help(src, dst, file, threads, index, l)
-		after, _ := os.Stat(fulldst)
+		after, err := os.Stat(fulldst)
+		if err != nil {
+			log.Debug.Printf("获取目标文件基础数据产生的错误:%v\n", err)
+		}
 		after_size := after.Size()
 		diff := diff(before_size, after_size)
 		sum += (before_size - after_size)
@@ -63,6 +69,7 @@ func ConvToH265(src, dst, pattern, threads string) string {
 		log.Debug.Printf("节省了%v的空间\n", diff)
 		runtime.GC()
 	}
+	log.Debug.Printf("共节省了%v的空间\n", getSize(sum))
 	return getSize(sum)
 }
 
@@ -126,7 +133,10 @@ func toh265Help(src, dst, file, threads string, index, total int) string {
 }
 
 func getFiles(dir, pattern string) []string {
-	files, _ := os.ReadDir(dir)
+	files, err := os.ReadDir(dir)
+	if err != nil {
+		log.Debug.Printf("读取文件目录产生的错误:%v\n", err)
+	}
 	var aim []string
 	types := strings.Split(pattern, ";") //"wmv;rm"
 	for _, f := range files {
@@ -213,7 +223,6 @@ func diff(before, after int64) string {
 }
 
 func getSize(size int64) string {
-
 	fsize := float64(size)
 	var report string
 	if fsize < Kilobyte {
