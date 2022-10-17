@@ -123,9 +123,8 @@ func toh265Help(src, dst, file, threads string, index, total int) string {
 		log.Debug.Panicf("命令执行中有错误产生:%v\n", err)
 	}
 	log.Debug.Printf("完成当前文件的处理:源文件是%s\t目标文件是%s\n", in, file)
-	err = os.RemoveAll(in)
-	if err != nil {
-		return ""
+	if err := os.RemoveAll(in); err != nil {
+		log.Debug.Printf("删除源文件失败:%v\n", err)
 	} else {
 		log.Debug.Printf("删除源文件:%s\n", in)
 	}
