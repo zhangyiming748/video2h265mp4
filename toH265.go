@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"github.com/zhangyiming748/replace"
 	"github.com/zhangyiming748/video2h265mp4/log"
+	"github.com/zhangyiming748/video2h265mp4/util"
 	"github.com/zhangyiming748/voiceAlert"
 	"os"
 	"os/exec"
 	"path"
 	"runtime"
-	"strconv"
 	"strings"
 )
 
@@ -43,10 +43,10 @@ func ConvToH265(src, dst, pattern, threads string) string {
 			voiceAlert.Voice(complete)
 		}
 	}()
-	if illegal(src, dst, threads) {
+	if util.Illegal(src, dst, threads) {
 		os.Exit(1)
 	}
-	files := getFiles(src, pattern)
+	files := util.GetFiles(src, pattern)
 	log.Info.Println("文件目录", files)
 	l := len(files)
 	for index, file := range files {
@@ -129,87 +129,6 @@ func toh265Help(src, dst, file, threads string, index, total int) string {
 		log.Debug.Printf("删除源文件:%s\n", in)
 	}
 	return out
-}
-
-func getFiles(dir, pattern string) []string {
-	files, err := os.ReadDir(dir)
-	if err != nil {
-		log.Debug.Printf("读取文件目录产生的错误:%v\n", err)
-	}
-	var aim []string
-	types := strings.Split(pattern, ";") //"wmv;rm"
-	for _, f := range files {
-		if l := strings.Split(f.Name(), ".")[0]; len(l) != 0 {
-			for _, v := range types {
-				if strings.HasSuffix(f.Name(), v) {
-					log.Debug.Printf("有效的目标文件:%v\n", f.Name())
-					aim = append(aim, f.Name())
-				}
-			}
-		}
-	}
-	return aim
-}
-
-func illegal(src, dst, threads string) bool {
-	if src == dst {
-		log.Debug.Println("输入输出目录相同")
-		return true
-	}
-	if !exists(src) {
-		log.Debug.Println("src目录不存在")
-		return true
-	}
-	if !exists(dst) {
-		log.Debug.Println("dst目录不存在")
-		return true
-	}
-	if !isDir(src) {
-		log.Debug.Println("src不是目录")
-		return true
-	}
-	if !isDir(dst) {
-		log.Debug.Println("dst不是目录")
-		return true
-	}
-	if !allowThreads(threads) {
-		log.Debug.Println("不允许的线程数")
-		return true
-	}
-	return false
-}
-
-// 判断所给路径文件/文件夹是否存在
-func exists(path string) bool {
-	_, err := os.Stat(path) //os.Stat获取文件信息
-	if err != nil {
-		if os.IsExist(err) {
-			return true
-		}
-		return false
-	}
-	return true
-}
-
-// 判断所给路径是否为文件夹
-func isDir(path string) bool {
-	s, err := os.Stat(path)
-	if err != nil {
-		return false
-	}
-	return s.IsDir()
-}
-
-// 判断给定线程数是否合法
-func allowThreads(threads string) bool {
-	maxThreads := runtime.NumCPU()
-	if t, err := strconv.Atoi(threads); err != nil {
-		return false
-	} else if t >= maxThreads {
-		return false
-	} else {
-		return true
-	}
 }
 
 /*
