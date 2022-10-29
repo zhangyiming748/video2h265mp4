@@ -31,9 +31,9 @@ const (
 )
 
 /*
-转换h265并返回此次任务节省的磁盘空间
+转换h265并返回此次任务节省的磁盘空间和文件数
 */
-func ConvToH265(src, dst, pattern, threads string) string {
+func ConvToH265(src, dst, pattern, threads string) (save string, total int) {
 	var sum int64
 	defer func() {
 		if err := recover(); err != nil {
@@ -70,7 +70,9 @@ func ConvToH265(src, dst, pattern, threads string) string {
 		runtime.GC()
 	}
 	log.Debug.Printf("共节省了%v的空间\n", getSize(sum))
-	return getSize(sum)
+	save = getSize(sum)
+	total = l
+	return
 }
 
 /*

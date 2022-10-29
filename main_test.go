@@ -1,17 +1,21 @@
 package video2h265mp4
 
 import (
+	"github.com/zhangyiming748/video2h265mp4/log"
 	"os/exec"
 	"strconv"
 	"testing"
 )
 
 func TestUnit(t *testing.T) {
-	src := "/Users/zen/Downloads/Downie"
-	dst := "/Users/zen/Downloads/Downie/h265"
+	src := "/Users/zen/Github/video2h265mp4/DB"
+	dst := "/Users/zen/Github/video2h265mp4/DB/h265"
 	pattern := "mp4"
 	threads := "4"
-	ConvToH265(src, dst, pattern, threads)
+	save, total := ConvToH265(src, dst, pattern, threads)
+	log.Debug.Printf("节省的空间:%v\n", save)
+	log.Debug.Printf("共处理的文件数:%v\n", total)
+
 }
 
 func BenchmarkBeep(b *testing.B) {
