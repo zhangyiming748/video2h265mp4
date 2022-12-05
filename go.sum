@@ -1,6 +1,8 @@
 github.com/zhangyiming748/replace v0.0.4 h1:MttKBU+2pFNofExc1oUY0vaEsRV0lGiAyPSdyIn7/Co=
 github.com/zhangyiming748/replace v0.0.4/go.mod h1:R3otYn+0qxaHOVaz0LafMwoDjhTexJijrLgfcDyOYCQ=
-github.com/zhangyiming748/voiceAlert v0.0.5 h1:7qQV8fKCrM1VShAU4gYcMjDmzl0KTg+hpKh83+KliCw=
-github.com/zhangyiming748/voiceAlert v0.0.5/go.mod h1:ReSkuJK/eAGpWs1k5MvAAe2WTKKQly6LzbOZ6FoHk6Y=
-github.com/zhangyiming748/voiceAlert v0.0.8 h1:N206Rkx97stcB8joC9a/9DOU7fHCvStZyLhEj77iBhM=
-github.com/zhangyiming748/voiceAlert v0.0.8/go.mod h1:ReSkuJK/eAGpWs1k5MvAAe2WTKKQly6LzbOZ6FoHk6Y=
+github.com/zhangyiming748/voiceAlert v0.0.7 h1:PnBbtCbSTrg/VpUs1bs7s6cI+hiltGH91PsgmFTjdVg=
+github.com/zhangyiming748/voiceAlert v0.0.7/go.mod h1:Ki+oLxZRyzJnxYhrtp+3wiFSJOZEcuVT1+bIprW6A/E=
+github.com/zhangyiming748/voiceAlert v0.0.9 h1:4UxBuIVSl7Y/lZRHH0rlapMade7+bq7jtgg3iY1w9qo=
+github.com/zhangyiming748/voiceAlert v0.0.9/go.mod h1:ReSkuJK/eAGpWs1k5MvAAe2WTKKQly6LzbOZ6FoHk6Y=
+golang.org/x/exp v0.0.0-20221106115401-f9659909a136 h1:Fq7F/w7MAa1KJ5bt2aJ62ihqp9HDcRuyILskkpIAurw=
+golang.org/x/exp v0.0.0-20221106115401-f9659909a136/go.mod h1:CxIveKay+FTh1D0yPZemJVgC/95VzuuOLq5Qi4xnoYc=
